@@ -151,3 +151,49 @@ export async function getPostsByAuthor(authorId: string) {
     throw new Error('Failed to fetch posts by author');
   }
 }
+
+// Fetch comments for a post
+export async function getCommentsByPost(postId: string) {
+  try {
+    const response = await cosmic.objects
+      .find({
+        type: 'comments',
+        'metadata.post': postId,
+        'metadata.status': 'Approved'
+      })
+      .props(['id', 'title', 'metadata', 'created_at']);
+    
+    return response.objects;
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return [];
+    }
+    throw new Error('Failed to fetch comments');
+  }
+}
+
+// Create a new comment
+export async function createComment(data: {
+  author_name: string;
+  author_email: string;
+  comment_text: string;
+  post_id: string;
+}) {
+  try {
+    const response = await cosmic.objects.insertOne({
+      title: `Comment by ${data.author_name}`,
+      type: 'comments',
+      metadata: {
+        author_name: data.author_name,
+        author_email: data.author_email,
+        comment_text: data.comment_text,
+        post: data.post_id,
+        status: 'Pending'
+      }
+    });
+    
+    return response.object;
+  } catch (error) {
+    throw new Error('Failed to create comment');
+  }
+}

@@ -47,6 +47,18 @@ export interface Post extends CosmicObject {
   };
 }
 
+// Comment interface
+export interface Comment extends CosmicObject {
+  type: 'comments';
+  metadata: {
+    author_name: string;
+    author_email: string;
+    comment_text: string;
+    post: Post | string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+  };
+}
+
 // API response types
 export interface CosmicResponse<T> {
   objects: T[];
@@ -70,6 +82,11 @@ export function isCategory(obj: CosmicObject): obj is Category {
   return obj.type === 'categories';
 }
 
+// Type guard for Comment
+export function isComment(obj: CosmicObject): obj is Comment {
+  return obj.type === 'comments';
+}
+
 // Contact form types
 export interface ContactFormData {
   name: string;
@@ -81,4 +98,19 @@ export interface ContactFormResponse {
   success: boolean;
   message: string;
   error?: string;
+}
+
+// Comment form types
+export interface CommentFormData {
+  author_name: string;
+  author_email: string;
+  comment_text: string;
+  post_id: string;
+}
+
+export interface CommentFormResponse {
+  success: boolean;
+  message: string;
+  error?: string;
+  comment?: Comment;
 }

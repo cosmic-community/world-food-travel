@@ -1,9 +1,11 @@
 // app/posts/[slug]/page.tsx
-import { getPost } from '@/lib/cosmic'
-import { Post } from '@/types'
+import { getPost, getCommentsByPost } from '@/lib/cosmic'
+import { Post, Comment } from '@/types'
 import { notFound } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
+import CommentsList from '@/components/CommentsList'
+import CommentForm from '@/components/CommentForm'
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -16,6 +18,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const author = post.metadata?.author
   const category = post.metadata?.category
   const featuredImage = post.metadata?.featured_image
+  
+  // Fetch comments for this post
+  const comments = await getCommentsByPost(post.id) as Comment[]
 
   return (
     <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -76,8 +81,14 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       )}
 
       {/* Content */}
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none mb-12">
         <ReactMarkdown>{post.metadata?.content || ''}</ReactMarkdown>
+      </div>
+
+      {/* Comments Section */}
+      <div className="border-t border-gray-200 pt-12 mt-12 space-y-8">
+        <CommentsList comments={comments} />
+        <CommentForm postId={post.id} />
       </div>
 
       {/* Back Link */}
