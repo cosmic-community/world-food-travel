@@ -8,7 +8,7 @@ interface HeaderProps {
   categories: Category[]
 }
 
-function HeaderContent({ categories }: HeaderProps) {
+export default function Header({ categories }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Prevent body scroll when mobile menu is open
@@ -167,11 +167,4 @@ function HeaderContent({ categories }: HeaderProps) {
       </div>
     </header>
   )
-}
-
-export default async function Header() {
-  const { getCategories } = await import('@/lib/cosmic')
-  const categories = await getCategories() as Category[]
-
-  return <HeaderContent categories={categories} />
 }
