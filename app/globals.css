@@ -49,3 +49,14 @@
     @apply border-l-4 border-accent pl-4 italic my-4;
   }
 }
+
+/* Mobile menu animations */
+@layer utilities {
+  .translate-x-full {
+    transform: translateX(100%);
+  }
+  
+  .translate-x-0 {
+    transform: translateX(0);
+  }
+}
