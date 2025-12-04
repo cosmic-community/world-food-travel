@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { ContactFormData, ContactFormResponse } from '@/types'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as ContactFormData
@@ -32,6 +30,22 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Check if API key is configured
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not configured')
+      return NextResponse.json<ContactFormResponse>(
+        {
+          success: false,
+          message: 'Email service not configured',
+          error: 'The email service is not properly configured. Please contact the administrator.'
+        },
+        { status: 500 }
+      )
+    }
+
+    // Initialize Resend client only when needed (not at module level)
+    const resend = new Resend(process.env.RESEND_API_KEY)
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
