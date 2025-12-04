@@ -30,6 +30,11 @@ export default function Footer() {
                   Latest Posts
                 </a>
               </li>
+              <li>
+                <a href="/contact" className="text-gray-600 hover:text-primary transition-colors">
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
 

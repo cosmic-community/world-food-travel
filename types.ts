@@ -69,3 +69,16 @@ export function isAuthor(obj: CosmicObject): obj is Author {
 export function isCategory(obj: CosmicObject): obj is Category {
   return obj.type === 'categories';
 }
+
+// Contact form types
+export interface ContactFormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
+export interface ContactFormResponse {
+  success: boolean;
+  message: string;
+  error?: string;
+}
