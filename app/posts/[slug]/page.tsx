@@ -2,10 +2,45 @@
 import { getPost, getCommentsByPost } from '@/lib/cosmic'
 import { Post, Comment } from '@/types'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
 import CommentsList from '@/components/CommentsList'
 import CommentForm from '@/components/CommentForm'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const post = await getPost(slug) as Post | null
+
+  if (!post) return { title: 'Post not found' }
+
+  const title = post.metadata?.title || post.title
+  const description = (post.metadata?.content || '')
+    .replace(/[#*_`>\[\]!]|\(https?:\/\/[^)]*\)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 160)
+  const image = post.metadata?.featured_image?.imgix_url
+    ? `${post.metadata.featured_image.imgix_url}?w=1200&h=630&fit=crop&auto=format,compress`
+    : undefined
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      images: image ? [{ url: image, width: 1200, height: 630, alt: title }] : undefined,
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  }
+}
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
